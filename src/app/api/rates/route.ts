@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const prisma = PrismaGetInstance()
   const body = await req.json()
   const { rate } = body
-  const user = await getCurrentUser();
+  const user:any = await getCurrentUser();
   if(!user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   const prisma = PrismaGetInstance()
-  const user = await getCurrentUser();
+  const user:any = await getCurrentUser();
   if(!user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }

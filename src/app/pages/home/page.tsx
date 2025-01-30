@@ -52,6 +52,7 @@ export default function Home() {
         getTotalHours(data.worklogs);
       }
     } catch (err) {
+      console.log("ERROR: ",err);
       setError("Something went wrong")
     } finally {
       setLoading(false)
@@ -73,6 +74,7 @@ export default function Home() {
         setRate(data.rateObject.rate);
       }
     } catch (err) {
+      console.log("ERROR: ",err);
       setError("Something went wrong")
     }
   }
@@ -121,7 +123,7 @@ export default function Home() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {worklogs.map((worklog) => (
+              {worklogs.map((worklog:any) => (
                 <TableRow 
                   key={worklog.id} 
                   className="cursor-pointer"
@@ -137,6 +139,7 @@ export default function Home() {
             </TableBody>
           </Table>
         </div>
+        {error ? <div className="text-red-500 text-center">{error}</div> : null }
       </div>
     </>
   );

@@ -67,7 +67,8 @@ useEffect(() => {
       }
       setOpen(false);
       refresh()
-    } catch (error) {
+    } catch (err) {
+      console.log("ERROR: ",err);
       setError("Something went wrong during signup")
     } finally {
       setLoading(false)
@@ -91,6 +92,7 @@ useEffect(() => {
       refresh();
       setOpen(false);
     }catch(err){
+      console.log("ERROR: ",err);
       setError("Something went wrong during delete")
     } finally{
       setLoading(false)
@@ -156,6 +158,7 @@ useEffect(() => {
           </div>
         </DialogContent>
       </Dialog>
+      {error ? <div className="text-red-500 text-center">{error}</div> : null }
     </div>
   )
 }

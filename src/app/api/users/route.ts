@@ -40,5 +40,8 @@ export async function POST(req: NextRequest) {
         userId: user.id
     }    
   });
+  if(!rate) {
+    return NextResponse.json({ error: 'Something went wrong!' }, { status: 400 })
+  }
   return NextResponse.json({ user }, { status: 200 })
 }

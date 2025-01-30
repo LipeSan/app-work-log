@@ -43,7 +43,8 @@ export default function LoginPage() {
 
       router.refresh()
       router.push("/pages/home")
-    } catch (error) {
+    } catch (err) {
+      console.log("ERROR: ",err);
       setError("Something went wrong")
     } finally {
       setLoading(false)

@@ -32,8 +32,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+    console.log(req.json());
     const prisma = PrismaGetInstance()
-    const user = await getCurrentUser();
+    const user:any = await getCurrentUser();
     const paramsAux = await params;
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
