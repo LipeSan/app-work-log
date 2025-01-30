@@ -12,7 +12,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { showToast } from "@/lib/utils"
 import { useEffect, useState } from "react"
+
 
  interface DetailDialogPropsTest {
   open: boolean;
@@ -27,12 +29,9 @@ const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, 
   const [startTime, setStartTime] = useState("17:30");
   const [endTime, setEndTime] = useState("22:30");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [edit, setEdit] = useState(false)
 
   useEffect(() => {
-    console.log(worklog);
-
     if (worklog) {
       setEdit(true);
       setDate(new Date(worklog.date));
@@ -46,7 +45,7 @@ const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError("")
+
     try {
       const response = !edit ? await fetch('/api/worklogs', {
         method: 'POST',
@@ -64,13 +63,15 @@ const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, 
         })
 
       if (!response.ok) {
-        throw new Error('Signup failed');
+        return showToast('ERROR', response.statusText);
       }
+      showToast('SUCCESS', `Worklog was ${!edit ? "created" : "edited"} successfull!`);
       setOpen(false);
       refresh()
+
     } catch (err) {
       console.log("ERROR: ", err);
-      setError("Something went wrong during signup")
+      showToast('ERROR', 'Something went wrong during created worklog');
     } finally {
       setLoading(false)
     }
@@ -78,23 +79,27 @@ const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, 
 
   const handleDelete = async () => {
     setLoading(true)
-    setError("")
     try {
       const response = await fetch(`/api/worklogs/${worklog.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ id: worklog.id }),
       })
 
       if (!response.ok) {
-        throw new Error('Delete failed');
+        return showToast('ERROR', response.statusText);
       }
+
+      showToast('SUCCESS', 'Worklog was deleted successfull!');
       refresh();
       setOpen(false);
     } catch (err) {
       console.log("ERROR: ", err);
-      setError("Something went wrong during delete")
+      showToast('ERROR', 'Something went wrong during deleted worklog');
+      //setError("Something went wrong during delete");
+      
     } finally {
       setLoading(false)
     }
@@ -160,7 +165,6 @@ const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, 
           </div>
         </DialogContent>
       </Dialog>
-      {error ? <div className="text-red-500 text-center">{error}</div> : null}
     </div>
   )
 }

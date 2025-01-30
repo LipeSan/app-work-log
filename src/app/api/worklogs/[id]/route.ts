@@ -1,7 +1,7 @@
 import { PrismaGetInstance } from '@/lib/prisma-pg'
 import { getCurrentUser } from '@/lib/session';
 import { NextRequest, NextResponse } from 'next/server'
-import React from 'react';
+
 
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -33,14 +33,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    console.log(req.json());
     const prisma = PrismaGetInstance()
     const user:any = await getCurrentUser();
-    const { id } =  await params;
+    const body = await req.json();
+    const { id } = body;
+    //const { id } =  await params || { id: ()params };
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     if (!id) {
         return NextResponse.json({ error: "ID is required" }, { status: 400 });
       }
