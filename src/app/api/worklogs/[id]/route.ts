@@ -9,7 +9,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const user:any = await getCurrentUser();
     const body = await req.json();
     const { date, startTime, endTime } = body;
-    const { id } =  React.use(params);
+    const { id } =  await params;
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -36,7 +36,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     console.log(req.json());
     const prisma = PrismaGetInstance()
     const user:any = await getCurrentUser();
-    const { id } =  React.use(params);
+    const { id } =  await params;
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
