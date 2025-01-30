@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
     signIn: '/pages/login',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }:any) {
       // Persist the OAuth access_token to the token right after signin
       if (user) {
         return {
@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token
     },
-    async session({ session, token }) {
+    async session({ session, token }:any) {
       // Send properties to the client, like an access_token from a provider.
       return {
         ...session,

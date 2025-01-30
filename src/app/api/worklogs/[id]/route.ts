@@ -1,22 +1,23 @@
 import { PrismaGetInstance } from '@/lib/prisma-pg'
 import { getCurrentUser } from '@/lib/session';
 import { NextRequest, NextResponse } from 'next/server'
+import React from 'react';
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const prisma = PrismaGetInstance()
-    const user = await getCurrentUser();
+    const user:any = await getCurrentUser();
     const body = await req.json();
-    const paramsAux = await params;
     const { date, startTime, endTime } = body;
+    const { id } =  React.use(params);
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    if (!paramsAux || !paramsAux.id) {
+    if (!id) {
         return NextResponse.json({ error: "ID is required" }, { status: 400 });
       }
 
-    const id = paramsAux.id;
     const worklog = await prisma.worklog.update({
         where: { id: id },
         data: {
@@ -31,22 +32,22 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ worklog }, { status: 200 })
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     console.log(req.json());
     const prisma = PrismaGetInstance()
     const user:any = await getCurrentUser();
-    const paramsAux = await params;
+    const { id } =  React.use(params);
     if (!user?.id) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    if (!paramsAux || !paramsAux.id) {
+    if (!id) {
         return NextResponse.json({ error: "ID is required" }, { status: 400 });
       }
 
-    const id = paramsAux.id;
+    //const id = paramsAux.id;
     const worklog = await prisma.worklog.delete({
-        where: { id: id },
+        where: { id },
     });
     if (!worklog) {
         return NextResponse.json({ error: 'Worklog not found' }, { status: 404 })

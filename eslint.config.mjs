@@ -11,15 +11,12 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    plugins: {
-      "@typescript-eslint": eslintPluginTs,
-    },
-    languageOptions: {
-      parser: eslintParserTs,
-      parserOptions: {
-        project: "./tsconfig.json",
-      },
-    },
+    parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },

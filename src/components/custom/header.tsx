@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import WorkLogPage from '../../app/pages/worklog/page'
+import WorkLogPage from '@/components/custom/dialog-worklog'
 
 
 interface DetailDialogProps {
@@ -9,8 +9,8 @@ interface DetailDialogProps {
   refresh: () => void;
 }
 
-export default function Header({open, setOpen, worklog, refresh}: DetailDialogProps) {
-
+//export default function Header({open, setOpen, worklog, refresh}: DetailDialogProps) {
+const Header: React.FC<DetailDialogProps> = ({open, setOpen, worklog, refresh}) => {
   return (
     <header className="w-full bg-gray-500 text-white relative">
       <div className="container mx-auto px-4 py-3">
@@ -29,3 +29,5 @@ export default function Header({open, setOpen, worklog, refresh}: DetailDialogPr
     </header>
   )
 }
+
+export default Header;

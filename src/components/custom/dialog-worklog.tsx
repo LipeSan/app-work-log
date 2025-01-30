@@ -14,14 +14,15 @@ import {
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 
-interface DetailDialogProps {
+ interface DetailDialogPropsTest {
   open: boolean;
   setOpen: (open: boolean) => void;
-  worklog:any | null;
+  worklog: any | null;
   refresh: () => void;
 }
 
-export default function WorkLogPage({open, setOpen, worklog, refresh}: DetailDialogProps) {
+//export default function WorkLogPage({ open, setOpen, worklog, refresh }: DetailDialogProps) {
+const WorkLogPage: React.FC<DetailDialogPropsTest> = ({ open, setOpen, worklog, refresh }) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [startTime, setStartTime] = useState("17:30");
   const [endTime, setEndTime] = useState("22:30");
@@ -29,9 +30,9 @@ export default function WorkLogPage({open, setOpen, worklog, refresh}: DetailDia
   const [error, setError] = useState("");
   const [edit, setEdit] = useState(false)
 
-useEffect(() => {
-  console.log(worklog);
-  
+  useEffect(() => {
+    console.log(worklog);
+
     if (worklog) {
       setEdit(true);
       setDate(new Date(worklog.date));
@@ -52,15 +53,15 @@ useEffect(() => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({date, startTime, endTime}),
-      }) : 
-      await fetch(`/api/worklogs/${worklog.id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({date, startTime, endTime}),
-      }) 
+        body: JSON.stringify({ date, startTime, endTime }),
+      }) :
+        await fetch(`/api/worklogs/${worklog.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ date, startTime, endTime }),
+        })
 
       if (!response.ok) {
         throw new Error('Signup failed');
@@ -68,35 +69,36 @@ useEffect(() => {
       setOpen(false);
       refresh()
     } catch (err) {
-      console.log("ERROR: ",err);
+      console.log("ERROR: ", err);
       setError("Something went wrong during signup")
     } finally {
       setLoading(false)
     }
   }
 
-  const handleDelete = async() => {
+  const handleDelete = async () => {
     setLoading(true)
     setError("")
-    try{
+    try {
       const response = await fetch(`/api/worklogs/${worklog.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-      }) 
+      })
 
       if (!response.ok) {
         throw new Error('Delete failed');
       }
       refresh();
       setOpen(false);
-    }catch(err){
-      console.log("ERROR: ",err);
+    } catch (err) {
+      console.log("ERROR: ", err);
       setError("Something went wrong during delete")
-    } finally{
+    } finally {
       setLoading(false)
     }
+
   }
 
   const handleOpen = () => {
@@ -109,7 +111,7 @@ useEffect(() => {
 
   return (
     <div>
-      {loading ? <Loading/> : null}
+      {loading ? <Loading /> : null}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button onClick={() => handleOpen()}>Create Worklog</Button>
@@ -154,11 +156,13 @@ useEffect(() => {
           <div className="flex place-content-between">
             <Button onClick={handleSave}>Save Worklog</Button>
             {edit ? <Button className="bg-red-500" onClick={handleDelete}>Delete</Button> : null}
-            
+
           </div>
         </DialogContent>
       </Dialog>
-      {error ? <div className="text-red-500 text-center">{error}</div> : null }
+      {error ? <div className="text-red-500 text-center">{error}</div> : null}
     </div>
   )
 }
+
+export default WorkLogPage;
