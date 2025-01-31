@@ -1,5 +1,6 @@
 import { PrismaGetInstance } from '@/lib/prisma-pg'
 import { getCurrentUser } from '@/lib/session';
+import moment from 'moment';
 import { NextRequest, NextResponse } from 'next/server'
 
 
@@ -21,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const worklog = await prisma.worklog.update({
         where: { id: id },
         data: {
-            date,
+            date: new Date(moment(date).format("YYYY-MM-DD")),
             startTime,
             endTime
         }

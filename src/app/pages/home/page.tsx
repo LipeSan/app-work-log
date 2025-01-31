@@ -14,9 +14,11 @@ import {
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useRouter } from 'next/navigation';
+import { PaymentPeriodSelector } from '@/components/custom/payment-period-selector';
 
 export default function Home() {
   const [worklogs, setWorklogs] = useState([]);
+  const [worklogsMain, setWorklogsMain] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalHours, setTotalHours] = useState('00:00');
   const [totalAsHours, setTotalAsHours] = useState(0);
@@ -24,13 +26,14 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [item, setItem] = useState(null);
   const [error, setError] = useState("");
+  const [period, setPeriod] = useState();
   const router = useRouter();
   useEffect(() => {
     getRate();
-    getWorklogs();
+    //getWorklogs();
   }, [])
 
-  const getWorklogs = async () => {
+  const getWorklogs = async (isCreateWorklog:boolean = true) => {
     setLoading(true);
     setItem(null);
     setError("");
@@ -49,10 +52,14 @@ export default function Home() {
         setError(data.error)
       } else {
         setWorklogs(data.worklogs);
-        getTotalHours(data.worklogs);
+        if(!isCreateWorklog){
+          return data.worklogs
+        } else {
+          filterWorklog(period);
+        }
       }
     } catch (err) {
-      console.log("ERROR: ",err);
+      console.log("ERROR: ", err);
       setError("Something went wrong")
     } finally {
       setLoading(false)
@@ -74,9 +81,23 @@ export default function Home() {
         setRate(data.rateObject.rate);
       }
     } catch (err) {
-      console.log("ERROR: ",err);
+      console.log("ERROR: ", err);
       setError("Something went wrong")
     }
+  }
+
+  const filterWorklog = async (data: any) => {
+    setPeriod(data);
+    const worklogList = await getWorklogs(false);
+
+    const worklogAux = worklogList.filter((worklog: any) => {
+      const start = new Date(data.startDate)
+      const end = new Date(data.endDate)
+      const now = new Date(worklog.date)
+      return now >= start && now <= end;
+    })
+    getTotalHours(worklogAux);
+    setWorklogsMain(worklogAux);
   }
 
   const handleRowClick = (item: any) => {
@@ -84,7 +105,7 @@ export default function Home() {
     setOpen(true);
   };
 
-  const getTotalHoursByDay = (worklog:any) => {
+  const getTotalHoursByDay = (worklog: any) => {
     const inicio = moment(worklog.startTime, "HH:mm");
     const fim = moment(worklog.endTime, "HH:mm");
     const durationHours = fim.diff(inicio, 'hours');
@@ -92,7 +113,7 @@ export default function Home() {
     return `${durationHours}:${durationMinutes}`
   }
 
-  const getTotalHours = (worklogList:[]) => {
+  const getTotalHours = (worklogList: []) => {
     let totalDuration = moment.duration({ hours: 0, minutes: 0 });
     worklogList.map(element => {
       const duration = getTotalHoursByDay(element).split(":");
@@ -105,10 +126,11 @@ export default function Home() {
   return (
     <>
       {loading ? <Loading /> : null}
-      <Header refresh={getWorklogs} open={open} worklog={item} setOpen={setOpen}/>
-      <div className="grid mt-5 p-2">
-          <AmountCard title="Total Hours" amount={totalHours} />
-          <AmountCard title="Total Money" amount={`$${(rate*totalAsHours).toFixed(2)}`} />
+      <Header refresh={getWorklogs} open={open} worklog={item} setOpen={setOpen} />
+      <div className="grid mt-5 p-2 gap-4">
+        <PaymentPeriodSelector onSelect={(data) => filterWorklog(data)}/>
+        <AmountCard title="Total Hours" amount={totalHours} />
+        <AmountCard title="Total Money" amount={`$${(rate * totalAsHours).toFixed(2)}`} />
       </div>
       <div className="grid grid-rows-[0px_1fr_20px] justify-items-center min-h-screen p-2 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
         <div className="rounded-md border w-full">
@@ -123,9 +145,9 @@ export default function Home() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {worklogs.map((worklog:any) => (
-                <TableRow 
-                  key={worklog.id} 
+              {worklogsMain.map((worklog: any) => (
+                <TableRow
+                  key={worklog.id}
                   className="cursor-pointer"
                   onClick={() => handleRowClick(worklog)}
                 >
@@ -139,7 +161,7 @@ export default function Home() {
             </TableBody>
           </Table>
         </div>
-        {error ? <div className="text-red-500 text-center">{error}</div> : null }
+        {error ? <div className="text-red-500 text-center">{error}</div> : null}
       </div>
     </>
   );

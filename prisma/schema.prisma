@@ -60,4 +60,13 @@ model Rate {
   updatedAt     DateTime      @updatedAt()
 }
 
+model PaymentPeriod {
+  id            String        @id @default(uuid())
+  startDate     DateTime
+  endDate       DateTime
+  status        String        @default("Active")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt()
+}
+
 

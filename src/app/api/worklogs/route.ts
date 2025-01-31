@@ -1,5 +1,6 @@
 import { PrismaGetInstance } from '@/lib/prisma-pg'
 import { getCurrentUser } from '@/lib/session';
+import moment from 'moment';
 import {NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
   const worklog = await prisma.worklog.create({
     data: {
-      date,
+      date: new Date(moment(date).format("YYYY-MM-DD")),
       startTime,
       endTime,
       userId: user.id
