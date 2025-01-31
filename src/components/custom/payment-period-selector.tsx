@@ -22,7 +22,7 @@ interface PaymentPeriodSelectorProps {
 
 export function PaymentPeriodSelector({ onSelect }: PaymentPeriodSelectorProps) {
   const [paymentPeriods, setPaymentPeriods] = useState<PaymentPeriod[]>([])
-  const [periodSelect, setPeriodSelect] = useState({id:""})
+  const [periodSelect, setPeriodSelect] = useState("")
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export function PaymentPeriodSelector({ onSelect }: PaymentPeriodSelectorProps) 
       </CardHeader>
       <CardContent>
         <Select onValueChange={(value) => {
-          const period = paymentPeriods.find(p => p.id === value)
+          const period:any = paymentPeriods.find(p => p.id === value)
           if (period) {
             onSelect(period)
             setPeriodSelect(period.id)
