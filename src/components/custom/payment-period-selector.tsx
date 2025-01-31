@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import moment from "moment"
 import { useEffect, useState } from "react"
 
 interface PaymentPeriod {
@@ -61,9 +62,9 @@ export function PaymentPeriodSelector({ onSelect }: PaymentPeriodSelectorProps) 
   }
 
   const formatPeriodLabel = (period: PaymentPeriod) => {
-    const start = new Date(period.startDate).toLocaleDateString()
-    const end = new Date(period.endDate).toLocaleDateString()
-    return `${start} - ${end}`
+    const start = new Date(period.startDate)
+    const end = new Date(period.endDate)
+    return `${moment(start).format("DD/MM/YYYY")} - ${moment(end).format("DD/MM/YYYY")}`
   }
 
   return (
